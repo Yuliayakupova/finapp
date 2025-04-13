@@ -8,6 +8,15 @@ public class Transaction {
     private BigDecimal amount;
     private String description;
     private LocalDateTime createdAt;
+    private String category;
+
+    public Transaction(Long id, BigDecimal amount, String description, LocalDateTime createdAt, String category) {
+        this.id = id;
+        this.amount = amount;
+        this.description = description;
+        this.createdAt = createdAt;
+        this.category = category;
+    }
 
     public Long getId() {
         return id;
@@ -39,5 +48,13 @@ public class Transaction {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
