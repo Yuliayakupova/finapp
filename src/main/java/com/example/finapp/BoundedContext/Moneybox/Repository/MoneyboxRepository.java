@@ -2,9 +2,7 @@ package com.example.finapp.BoundedContext.Moneybox.Repository;
 
 
 import com.example.finapp.BoundedContext.Moneybox.DTO.Moneybox;
-import com.example.finapp.BoundedContext.Moneybox.Request.CreateMoneyboxRequest;
 import com.example.finapp.SharedContext.Service.SqlLoader;
-import jakarta.annotation.PostConstruct;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -19,12 +17,6 @@ public class MoneyboxRepository {
     public MoneyboxRepository(JdbcTemplate jdbcTemplate, SqlLoader sqlLoader) {
         this.jdbcTemplate = jdbcTemplate;
         this.sqlLoader = sqlLoader;
-    }
-
-    @PostConstruct
-    public void init() {
-        String sql = sqlLoader.load("queries/moneybox/create.sql");
-        jdbcTemplate.execute(sql);
     }
 
     public Moneybox save(Moneybox moneybox) {

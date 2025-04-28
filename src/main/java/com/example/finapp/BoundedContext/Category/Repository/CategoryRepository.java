@@ -4,7 +4,6 @@ import com.example.finapp.BoundedContext.Category.DTO.Category;
 import com.example.finapp.BoundedContext.Category.Request.CreateCategoryRequest;
 import com.example.finapp.BoundedContext.Category.Request.UpdateCategoryRequest;
 import com.example.finapp.SharedContext.Service.SqlLoader;
-import jakarta.annotation.PostConstruct;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -18,12 +17,6 @@ public class CategoryRepository {
     public CategoryRepository(JdbcTemplate jdbcTemplate, SqlLoader sqlLoader) {
         this.jdbcTemplate = jdbcTemplate;
         this.sqlLoader = sqlLoader;
-    }
-
-    @PostConstruct
-    public void init() {
-        String sql = sqlLoader.load("queries/category/create.sql");
-        jdbcTemplate.execute(sql);
     }
 
     public boolean existsByNameAndType(String name, String type) {
