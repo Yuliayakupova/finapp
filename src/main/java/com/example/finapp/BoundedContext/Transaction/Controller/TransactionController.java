@@ -1,11 +1,16 @@
 package com.example.finapp.BoundedContext.Transaction.Controller;
 
 import com.example.finapp.BoundedContext.Transaction.DTO.Transaction;
+import com.example.finapp.BoundedContext.UserManagment.DTO.User;
 import com.example.finapp.BoundedContext.Transaction.Repository.TransactionRepository;
 import com.example.finapp.BoundedContext.Transaction.Request.CreateTransactionRequest;
 import com.example.finapp.BoundedContext.Transaction.Request.UpdateTransactionRequest;
+import com.example.finapp.BoundedContext.UserManagment.Repository.UserRepository;
+import com.example.finapp.SharedContext.Service.AuthenticationService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -16,9 +21,15 @@ import java.util.List;
 @RequestMapping("/api/v1/transactions")
 public class TransactionController {
     private final TransactionRepository repository;
+    private final AuthenticationService authenticationService;
+    private final UserRepository userRepository;
 
-    public TransactionController(TransactionRepository repository) {
-        this.repository = repository;
+    public TransactionController(TransactionRepository transactionRepository,
+                                 AuthenticationService authenticationService,
+                                 UserRepository userRepository) {
+        this.repository = transactionRepository;
+        this.authenticationService = authenticationService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -27,8 +38,15 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody CreateTransactionRequest request) {
-        repository.create(request);
+    public ResponseEntity<String> create(@RequestBody CreateTransactionRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email);
+        int userId = user.getUserId();
+
+        repository.create(request, userId);
+
         return ResponseEntity.ok("Transaction created");
     }
 

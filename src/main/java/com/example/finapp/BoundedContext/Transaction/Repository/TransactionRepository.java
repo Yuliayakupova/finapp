@@ -4,7 +4,6 @@ import com.example.finapp.BoundedContext.Transaction.DTO.Transaction;
 import com.example.finapp.BoundedContext.Transaction.Request.CreateTransactionRequest;
 import com.example.finapp.BoundedContext.Transaction.Request.UpdateTransactionRequest;
 import com.example.finapp.SharedContext.Service.SqlLoader;
-import jakarta.annotation.PostConstruct;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -22,12 +21,6 @@ public class TransactionRepository {
     public TransactionRepository(JdbcTemplate jdbcTemplate, SqlLoader sqlLoader) {
         this.jdbcTemplate = jdbcTemplate;
         this.sqlLoader = sqlLoader;
-    }
-
-    @PostConstruct
-    public void init() {
-        String sql = sqlLoader.load("queries/transaction/create.sql");
-        jdbcTemplate.execute(sql);
     }
 
     public List<Transaction> getAll() {
@@ -56,12 +49,16 @@ public class TransactionRepository {
         );
     }
 
-    public void create(CreateTransactionRequest request) {
-        String sql = sqlLoader.load("queries/transaction/insert.sql");
+    public void create (CreateTransactionRequest request, int userId) {
+        String sql = sqlLoader.load("queries/transactions/insert.sql");
         jdbcTemplate.update(sql,
                 request.getAmount(),
                 request.getDescription(),
-                request.getCategory()
+                request.getCreatedAt(),  // created_at явно передаём
+                request.getCategory(),
+                request.getMoneyboxId(),
+                userId,
+                request.getCategoryId()
         );
     }
 
