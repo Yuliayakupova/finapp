@@ -1,1 +1,1 @@
-DELETE FROM transactions WHERE id = ?;
+DELETE FROM "transaction" WHERE id = ?;

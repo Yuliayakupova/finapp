@@ -1,3 +1,3 @@
 SELECT id, amount, description, created_at, category
-FROM transactions
+FROM "transaction"
 WHERE id = ?;
