@@ -1,1 +1,1 @@
-SELECT id, amount, description, created_at, category FROM transactions;
+SELECT id, amount, description, created_at, category_id FROM "transaction";

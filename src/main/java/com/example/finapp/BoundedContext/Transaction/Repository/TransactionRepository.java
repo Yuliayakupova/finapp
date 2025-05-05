@@ -30,7 +30,7 @@ public class TransactionRepository {
                 rs.getBigDecimal("amount"),
                 rs.getString("description"),
                 rs.getTimestamp("created_at").toLocalDateTime(),
-                rs.getInt("category")
+                rs.getInt("category_id")
         ));
     }
 

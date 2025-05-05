@@ -1,1 +1,1 @@
-SELECT id, amount, description, created_at, category FROM transactions WHERE 1=1
+SELECT id, amount, description, created_at, category FROM "transaction" WHERE 1=1

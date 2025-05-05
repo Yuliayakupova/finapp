@@ -1,3 +1,3 @@
-UPDATE transactions
-SET amount = ?, description = ?, created_at = ?, category = ?
+UPDATE "transaction"
+SET amount = ?, description = ?, created_at = ?, category_id = ?
 WHERE id = ?
