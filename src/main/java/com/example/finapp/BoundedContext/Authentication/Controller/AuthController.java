@@ -6,7 +6,6 @@ import com.example.finapp.BoundedContext.UserManagment.DTO.User;
 import com.example.finapp.BoundedContext.UserManagment.Repository.UserRepository;
 import com.example.finapp.SharedContext.Security.JwtService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,7 +46,7 @@ public class AuthController {
         try {
             User user = userRepository.findByEmail(request.getEmail());
             if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-                String token = jwtService.generateToken(user.getEmail());
+                String token = jwtService.generateToken(user.getUserId());
                 return ResponseEntity.ok(token);
             } else {
                 return ResponseEntity.status(401).body("Invalid credentials");

@@ -35,3 +35,30 @@ CREATE TABLE IF NOT EXISTS transaction (
     FOREIGN KEY (category_id) REFERENCES category (id),
     FOREIGN KEY (moneybox_id) REFERENCES moneybox (id)
 );
+
+INSERT INTO category (name, type)
+VALUES
+    ('Groceries', 'expense'),
+    ('Transport', 'expense'),
+    ('Housing', 'expense'),
+    ('Utilities', 'expense'),
+    ('Health', 'expense'),
+    ('Beauty', 'expense'),
+    ('Entertainment', 'expense'),
+    ('Sports', 'expense'),
+    ('Kids', 'expense'),
+    ('Dining Out', 'expense'),
+    ('Education', 'expense'),
+    ('Gifts & Donations', 'expense'),
+    ('Clothing', 'expense'),
+    ('Travel', 'expense'),
+    ('Pets', 'expense'),
+    ('Other', 'expense'),
+
+    ('Salary', 'income'),
+    ('Freelance', 'income'),
+    ('Investments', 'income'),
+    ('Gifts', 'income'),
+    ('Refunds', 'income'),
+    ('Other', 'income')
+ON CONFLICT DO NOTHING;

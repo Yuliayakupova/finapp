@@ -34,15 +34,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             try {
-                String email = jwtService.getEmailFromToken(token);
+                int userId = jwtService.getUserIdFromToken(token);
+                System.out.println("User ID from token: " + userId);
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(
-                        email,
+                        userId,
                         null,
                         Collections.singletonList(new SimpleGrantedAuthority("USER"))
                 );
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {
+                System.out.println("Exception while processing token: " + e.getMessage());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }

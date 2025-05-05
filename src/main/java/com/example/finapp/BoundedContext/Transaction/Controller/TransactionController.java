@@ -1,13 +1,12 @@
 package com.example.finapp.BoundedContext.Transaction.Controller;
 
+import com.example.finapp.BoundedContext.Category.Repository.CategoryRepository;
 import com.example.finapp.BoundedContext.Transaction.DTO.Transaction;
-import com.example.finapp.BoundedContext.UserManagment.DTO.User;
 import com.example.finapp.BoundedContext.Transaction.Repository.TransactionRepository;
 import com.example.finapp.BoundedContext.Transaction.Request.CreateTransactionRequest;
 import com.example.finapp.BoundedContext.Transaction.Request.UpdateTransactionRequest;
-import com.example.finapp.BoundedContext.UserManagment.Repository.UserRepository;
-import com.example.finapp.SharedContext.Service.AuthenticationService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,15 +20,11 @@ import java.util.List;
 @RequestMapping("/api/v1/transactions")
 public class TransactionController {
     private final TransactionRepository repository;
-    private final AuthenticationService authenticationService;
-    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
-    public TransactionController(TransactionRepository transactionRepository,
-                                 AuthenticationService authenticationService,
-                                 UserRepository userRepository) {
+    public TransactionController(TransactionRepository transactionRepository, CategoryRepository categoryRepository) {
         this.repository = transactionRepository;
-        this.authenticationService = authenticationService;
-        this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @GetMapping
@@ -40,10 +35,11 @@ public class TransactionController {
     @PostMapping
     public ResponseEntity<String> create(@RequestBody CreateTransactionRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        int userId = (int) authentication.getPrincipal();
 
-        User user = userRepository.findByEmail(email);
-        int userId = user.getUserId();
+        if (!categoryRepository.isCategoryBelongsToUser(request.getCategoryId(), userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Category does not belong to the user.");
+        }
 
         repository.create(request, userId);
 
@@ -62,7 +58,7 @@ public class TransactionController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
             @RequestParam(required = false) BigDecimal minAmount,
             @RequestParam(required = false) BigDecimal maxAmount,
-            @RequestParam(required = false) String category
+            @RequestParam(required = false) int category
     ) {
         return repository.filter(startDate, endDate, minAmount, maxAmount, category);
     }
