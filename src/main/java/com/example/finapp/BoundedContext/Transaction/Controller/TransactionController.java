@@ -1,6 +1,7 @@
 package com.example.finapp.BoundedContext.Transaction.Controller;
 
 import com.example.finapp.BoundedContext.Category.Repository.CategoryRepository;
+import com.example.finapp.BoundedContext.Limit.Repository.LimitRepository;
 import com.example.finapp.BoundedContext.Transaction.DTO.Transaction;
 import com.example.finapp.BoundedContext.Transaction.Repository.TransactionRepository;
 import com.example.finapp.BoundedContext.Transaction.Request.CreateTransactionRequest;
@@ -21,10 +22,12 @@ import java.util.List;
 public class TransactionController {
     private final TransactionRepository repository;
     private final CategoryRepository categoryRepository;
+    private final LimitRepository limitRepository;
 
-    public TransactionController(TransactionRepository transactionRepository, CategoryRepository categoryRepository) {
+    public TransactionController(TransactionRepository transactionRepository, CategoryRepository categoryRepository, LimitRepository limitRepository) {
         this.repository = transactionRepository;
         this.categoryRepository = categoryRepository;
+        this.limitRepository = limitRepository;
     }
 
     @GetMapping
@@ -40,8 +43,13 @@ public class TransactionController {
         if (!categoryRepository.isCategoryBelongsToUser(request.getCategoryId(), userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Category does not belong to the user.");
         }
+        if (limitRepository.isLimitExceeded(request.getAmount(), userId, request.getCategoryId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Transaction exceeds the limit for this category.");
+        }
 
         repository.create(request, userId);
+
+        limitRepository.increaseUsedAmount(request.getAmount(), userId, request.getCategoryId());
 
         return ResponseEntity.ok("Transaction created");
     }
