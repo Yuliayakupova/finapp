@@ -5,6 +5,8 @@ import com.example.finapp.BoundedContext.Category.Repository.CategoryRepository;
 import com.example.finapp.BoundedContext.Category.Request.CreateCategoryRequest;
 import com.example.finapp.BoundedContext.Category.Request.UpdateCategoryRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +35,16 @@ public class CategoryController {
         }
     }
 
+    @PostMapping("/custom")
+    public ResponseEntity<String> createCustomCategory(@RequestBody CreateCategoryRequest categoryRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        int userId = (int) authentication.getPrincipal();
+
+        repository.createCustomCategory(categoryRequest.getName(), categoryRequest.getType(), userId);
+
+        return ResponseEntity.ok("Custom category created");
+    }
+
     @GetMapping("/{id}")
     public Category getById(@PathVariable Long id) {
         return repository.findById(id);
@@ -47,6 +59,12 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         repository.delete(id);
+        return ResponseEntity.ok("Category deleted");
+    }
+
+    @DeleteMapping("/custom/{id}")
+    public ResponseEntity<String> deleteCustomCategory(@PathVariable Long id) {
+        repository.deleteCustomCategory(id);
         return ResponseEntity.ok("Category deleted");
     }
 }
