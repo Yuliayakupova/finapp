@@ -1,0 +1,1 @@
+DELETE FROM moneybox WHERE id = ?;
