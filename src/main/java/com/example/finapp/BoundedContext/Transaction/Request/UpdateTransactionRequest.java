@@ -3,13 +3,13 @@ package com.example.finapp.BoundedContext.Transaction.Request;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class CreateTransactionRequest {
+public class UpdateTransactionRequest {
     private BigDecimal amount;
     private String description;
     private LocalDateTime createdAt;
     private String category;
 
-    public CreateTransactionRequest(BigDecimal amount, String description, LocalDateTime createdAt, String category) {
+    public UpdateTransactionRequest(BigDecimal amount, String description, LocalDateTime createdAt, String category) {
         this.amount = amount;
         this.description = description;
         this.createdAt = createdAt;
