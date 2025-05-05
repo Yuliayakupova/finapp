@@ -1,2 +1,3 @@
-INSERT INTO transaction (amount, description, created_at, category, moneybox_id, user_id, category_id)
-VALUES (?, ?, ?, ?, ?, ?, ?);
+INSERT INTO "transaction" (amount, description, moneybox_id, user_id, category_id)
+VALUES (?, ?, ?, ?, ?)
+

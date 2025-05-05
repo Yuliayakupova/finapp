@@ -30,7 +30,7 @@ public class TransactionRepository {
                 rs.getBigDecimal("amount"),
                 rs.getString("description"),
                 rs.getTimestamp("created_at").toLocalDateTime(),
-                rs.getString("category")
+                rs.getInt("category")
         ));
     }
 
@@ -44,18 +44,16 @@ public class TransactionRepository {
                         rs.getBigDecimal("amount"),
                         rs.getString("description"),
                         rs.getTimestamp("created_at").toLocalDateTime(),
-                        rs.getString("category")
+                        rs.getInt("category")
                 )
         );
     }
 
     public void create (CreateTransactionRequest request, int userId) {
-        String sql = sqlLoader.load("queries/transactions/insert.sql");
+        String sql = sqlLoader.load("queries/transaction/insert.sql");
         jdbcTemplate.update(sql,
                 request.getAmount(),
                 request.getDescription(),
-                request.getCreatedAt(),  // created_at явно передаём
-                request.getCategory(),
                 request.getMoneyboxId(),
                 userId,
                 request.getCategoryId()
@@ -67,7 +65,7 @@ public class TransactionRepository {
         jdbcTemplate.update(sql, id);
     }
 
-    public List<Transaction> filter(LocalDateTime startDate, LocalDateTime endDate, BigDecimal minAmount, BigDecimal maxAmount, String category) {
+    public List<Transaction> filter(LocalDateTime startDate, LocalDateTime endDate, BigDecimal minAmount, BigDecimal maxAmount, int category) {
         String baseSql = sqlLoader.load("queries/transaction/filter_base.sql");
         StringBuilder sql = new StringBuilder(baseSql);
         List<Object> params = new ArrayList<>();
@@ -88,7 +86,7 @@ public class TransactionRepository {
             sql.append(" AND amount <= ? ");
             params.add(maxAmount);
         }
-        if (category != null && !category.isBlank()) {
+        if (category > 0) {
             sql.append(" AND category = ? ");
             params.add(category);
         }
@@ -98,7 +96,7 @@ public class TransactionRepository {
                 rs.getBigDecimal("amount"),
                 rs.getString("description"),
                 rs.getTimestamp("created_at").toLocalDateTime(),
-                rs.getString("category")
+                rs.getInt("category")
         ));
     }
 

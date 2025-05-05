@@ -13,24 +13,24 @@ public class JwtService {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final long expirationMillis = 1000 * 60 * 60 * 24;
 
-    public String generateToken(String email) {
+    public String generateToken(int userId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationMillis);
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(String.valueOf(userId))
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key)
                 .compact();
     }
 
-    public String getEmailFromToken(String token) {
-        return Jwts.parserBuilder()
+    public int getUserIdFromToken(String token) {
+        return Integer.parseInt(Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .getSubject();
+                .getSubject());
     }
 }
