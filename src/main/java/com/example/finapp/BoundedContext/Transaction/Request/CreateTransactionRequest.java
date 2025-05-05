@@ -7,13 +7,15 @@ public class CreateTransactionRequest {
     private BigDecimal amount;
     private String description;
     private LocalDateTime createdAt;
-    private String category;
+    private Integer moneyboxId;
+    private int categoryId;
 
-    public CreateTransactionRequest(BigDecimal amount, String description, LocalDateTime createdAt, String category) {
+    public CreateTransactionRequest(BigDecimal amount, String description, LocalDateTime createdAt, Integer moneyboxId, int categoryId) {
         this.amount = amount;
         this.description = description;
         this.createdAt = createdAt;
-        this.category = category;
+        this.moneyboxId = moneyboxId;
+        this.categoryId = categoryId;
     }
 
     public BigDecimal getAmount() {
@@ -40,11 +42,19 @@ public class CreateTransactionRequest {
         this.createdAt = createdAt;
     }
 
-    public String getCategory() {
-        return category;
+    public Integer getMoneyboxId() {
+        return moneyboxId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setMoneyboxId(Integer moneyboxId) {
+        this.moneyboxId = moneyboxId;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 }

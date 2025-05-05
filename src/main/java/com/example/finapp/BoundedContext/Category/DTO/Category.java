@@ -1,21 +1,21 @@
 package com.example.finapp.BoundedContext.Category.DTO;
 
 public class Category {
-    private Long id;
+    private int id;
     private String name;
     private String type;
 
-    public Category(Long id, String name, String type) {
+    public Category(int id, String name, String type) {
         this.id = id;
         this.name = name;
         this.type = type;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

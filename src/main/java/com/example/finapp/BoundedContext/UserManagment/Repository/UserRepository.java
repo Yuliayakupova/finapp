@@ -3,7 +3,6 @@ package com.example.finapp.BoundedContext.UserManagment.Repository;
 import com.example.finapp.BoundedContext.UserManagment.DTO.User;
 import com.example.finapp.BoundedContext.UserManagment.Request.UpdateUserRequest;
 import com.example.finapp.SharedContext.Service.SqlLoader;
-import jakarta.annotation.PostConstruct;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -19,14 +18,8 @@ public class UserRepository {
         this.sqlLoader = sqlLoader;
     }
 
-    @PostConstruct
-    public void init() {
-        String sql = sqlLoader.load("queries/users/create.sql");
-        jdbcTemplate.execute(sql);
-    }
-
     public void create (User request) {
-        String sql = sqlLoader.load("queries/users/insert.sql");
+        String sql = sqlLoader.load("queries/user/insert.sql");
         jdbcTemplate.update(sql,
                 request.getEmail(),
                 request.getPassword(),
@@ -35,7 +28,7 @@ public class UserRepository {
     }
 
     public void update (UpdateUserRequest request) {
-        String sql = sqlLoader.load("queries/users/update.sql");
+        String sql = sqlLoader.load("queries/user/update.sql");
         jdbcTemplate.update(
                 sql,
                 request.getPassword(),
@@ -46,7 +39,21 @@ public class UserRepository {
     }
 
     public void delete(int userId) {
-        String sql = sqlLoader.load("queries/users/delete.sql");
+        String sql = sqlLoader.load("queries/user/delete.sql");
         jdbcTemplate.update(sql, userId);
+    }
+
+    public User findByEmail(String email) {
+        String sql = sqlLoader.load("queries/user/find_by_email.sql");
+        return jdbcTemplate.queryForObject(sql, new Object[]{email}, (rs, rowNum) -> {
+            return new User(
+                    rs.getInt("user_id"),
+                    rs.getString("email"),
+                    rs.getString("password"),
+                    rs.getString("name"),
+                    rs.getDate("registration_date").toLocalDate(),
+                    rs.getBoolean("is_authenticated")
+            );
+        });
     }
 }

@@ -8,9 +8,9 @@ public class Transaction {
     private BigDecimal amount;
     private String description;
     private LocalDateTime createdAt;
-    private String category;
+    private int category;
 
-    public Transaction(Long id, BigDecimal amount, String description, LocalDateTime createdAt, String category) {
+    public Transaction(Long id, BigDecimal amount, String description, LocalDateTime createdAt, int category) {
         this.id = id;
         this.amount = amount;
         this.description = description;
@@ -50,11 +50,11 @@ public class Transaction {
         this.createdAt = createdAt;
     }
 
-    public String getCategory() {
+    public int getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(int category) {
         this.category = category;
     }
 }
