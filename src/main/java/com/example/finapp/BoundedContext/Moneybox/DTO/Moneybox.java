@@ -4,13 +4,23 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Moneybox {
-    private int id;
-    private String name;
-    private BigDecimal targetAmount;
-    private BigDecimal currentAmount;
-    private LocalDate targetDate;
-    private int userId;
+    private int id;                // The unique identifier for the moneybox.
+    private String name;           // The name of the moneybox (e.g., "Vacation Fund").
+    private BigDecimal targetAmount;  // The target amount the user wants to save.
+    private BigDecimal currentAmount; // The current amount the user has saved.
+    private LocalDate targetDate;    // The date by which the user wants to reach the target amount.
+    private int userId;             // The ID of the user who owns this moneybox.
 
+    /**
+     * Constructor to create a new Moneybox instance.
+     *
+     * @param id the unique identifier for the moneybox.
+     * @param name the name of the moneybox.
+     * @param targetAmount the target amount to save.
+     * @param currentAmount the current amount saved.
+     * @param targetDate the target date for saving the amount.
+     * @param userId the ID of the user who owns this moneybox.
+     */
     public Moneybox(int id, String name, BigDecimal targetAmount, BigDecimal currentAmount, LocalDate targetDate, int userId) {
         this.id = id;
         this.name = name;
@@ -19,6 +29,8 @@ public class Moneybox {
         this.targetDate = targetDate;
         this.userId = userId;
     }
+
+    // Getter and setter methods
 
     public int getId() {
         return id;
@@ -68,4 +80,3 @@ public class Moneybox {
         this.userId = userId;
     }
 }
-
