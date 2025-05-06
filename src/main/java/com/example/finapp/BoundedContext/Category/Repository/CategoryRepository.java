@@ -41,7 +41,7 @@ public class CategoryRepository {
         );
     }
 
-    public Category findById(Long id) {
+    public Category findById(int id) {
         String sql = sqlLoader.load("queries/category/find_by_id.sql");
         return jdbcTemplate.queryForObject(
                 sql,
@@ -63,7 +63,7 @@ public class CategoryRepository {
         jdbcTemplate.update(sql, request.getName(), request.getType());
     }
 
-    public void update(Long id, UpdateCategoryRequest request) {
+    public void update(int id, UpdateCategoryRequest request) {
         String sql = sqlLoader.load("queries/category/update.sql");
         jdbcTemplate.update(
                 sql,
@@ -73,7 +73,7 @@ public class CategoryRepository {
         );
     }
 
-    public void delete(Long id) {
+    public void delete(int id) {
         String sql = sqlLoader.load("queries/category/delete.sql");
         jdbcTemplate.update(sql, id);
     }
@@ -83,12 +83,12 @@ public class CategoryRepository {
         jdbcTemplate.update(sql, name, type, userId);
     }
 
-    public void deleteCustomCategory(Long id) {
+    public void deleteCustomCategory(int id) {
         String sql = sqlLoader.load("queries/category/delete_custom.sql");
         jdbcTemplate.update(sql, id);
     }
 
-    public void updateCustomCategory(Long id, String name, String type, int userId) {
+    public void updateCustomCategory(int id, String name, String type, int userId) {
         String sql = sqlLoader.load("queries/category/update_custom.sql");
         jdbcTemplate.update(sql, name, type, userId, id);
     }

@@ -4,29 +4,27 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Moneybox {
-    private Long id;
+    private int id;
     private String name;
-    private BigDecimal goal;
+    private BigDecimal targetAmount;
     private BigDecimal currentAmount;
     private LocalDate targetDate;
+    private int userId;
 
-    public Moneybox(Long id, String name, BigDecimal goal, BigDecimal currentAmount, LocalDate targetDate) {
+    public Moneybox(int id, String name, BigDecimal targetAmount, BigDecimal currentAmount, LocalDate targetDate, int userId) {
         this.id = id;
         this.name = name;
-        this.goal = goal;
+        this.targetAmount = targetAmount;
         this.currentAmount = currentAmount;
         this.targetDate = targetDate;
+        this.userId = userId;
     }
 
-    public Moneybox() {
-
-    }
-
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -38,12 +36,12 @@ public class Moneybox {
         this.name = name;
     }
 
-    public BigDecimal getGoal() {
-        return goal;
+    public BigDecimal getTargetAmount() {
+        return targetAmount;
     }
 
-    public void setGoal(BigDecimal goal) {
-        this.goal = goal;
+    public void setTargetAmount(BigDecimal targetAmount) {
+        this.targetAmount = targetAmount;
     }
 
     public BigDecimal getCurrentAmount() {
@@ -60,6 +58,14 @@ public class Moneybox {
 
     public void setTargetDate(LocalDate targetDate) {
         this.targetDate = targetDate;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }
 

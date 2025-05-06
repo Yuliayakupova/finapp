@@ -4,25 +4,27 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Transaction {
-    private Long id;
+    private int id;
     private BigDecimal amount;
     private String description;
     private LocalDateTime createdAt;
     private int category;
+    private int moneyboxId;
 
-    public Transaction(Long id, BigDecimal amount, String description, LocalDateTime createdAt, int category) {
+    public Transaction(int id, BigDecimal amount, String description, LocalDateTime createdAt, int category, int moneyboxId) {
         this.id = id;
         this.amount = amount;
         this.description = description;
         this.createdAt = createdAt;
         this.category = category;
+        this.moneyboxId = moneyboxId;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -56,5 +58,13 @@ public class Transaction {
 
     public void setCategory(int category) {
         this.category = category;
+    }
+
+    public int getMoneyboxId() {
+        return moneyboxId;
+    }
+
+    public void setMoneyboxId(int moneyboxId) {
+        this.moneyboxId = moneyboxId;
     }
 }

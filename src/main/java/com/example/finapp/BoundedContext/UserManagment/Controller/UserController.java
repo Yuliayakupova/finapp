@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
+    public ResponseEntity<String> update(@PathVariable int id, @RequestBody UpdateUserRequest request) {
         repository.update(request);
         return ResponseEntity.ok("User updated");
     }

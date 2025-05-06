@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 public class UpdateMoneyboxRequest {
     private String name;
-    private BigDecimal goal;
+    private BigDecimal targetAmount;
     private BigDecimal currentAmount;
     private LocalDate targetDate;
 
@@ -17,12 +17,12 @@ public class UpdateMoneyboxRequest {
         this.name = name;
     }
 
-    public BigDecimal getGoal() {
-        return goal;
+    public BigDecimal getTargetAmount() {
+        return targetAmount;
     }
 
-    public void setGoal(BigDecimal goal) {
-        this.goal = goal;
+    public void setTargetAmount(BigDecimal targetAmount) {
+        this.targetAmount = targetAmount;
     }
 
     public BigDecimal getCurrentAmount() {

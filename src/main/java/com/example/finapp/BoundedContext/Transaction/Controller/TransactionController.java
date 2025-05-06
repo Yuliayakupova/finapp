@@ -51,7 +51,7 @@ public class TransactionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable int id) {
         repository.deleteById(id);
         return ResponseEntity.ok("Transaction deleted");
     }
@@ -68,13 +68,13 @@ public class TransactionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Transaction> findById(@PathVariable Long id) {
+    public ResponseEntity<Transaction> findById(@PathVariable int id) {
         Transaction transaction = repository.findById(id);
         return ResponseEntity.ok(transaction);
     }
     @PutMapping("/{id}")
     public ResponseEntity<?> update(
-            @PathVariable Long id,
+            @PathVariable int id,
             @RequestBody UpdateTransactionRequest request
     ) {
         repository.update(id, request);

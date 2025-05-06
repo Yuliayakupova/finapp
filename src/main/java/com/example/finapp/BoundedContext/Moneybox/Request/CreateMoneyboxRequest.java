@@ -5,7 +5,8 @@ import java.time.LocalDate;
 
 public class CreateMoneyboxRequest {
     private String name;
-    private BigDecimal goal;
+    private BigDecimal targetAmount; // Переименовал goal в targetAmount для согласованности
+    private BigDecimal currentAmount;
     private LocalDate targetDate;
 
     public String getName() {
@@ -16,12 +17,20 @@ public class CreateMoneyboxRequest {
         this.name = name;
     }
 
-    public BigDecimal getGoal() {
-        return goal;
+    public BigDecimal getTargetAmount() {
+        return targetAmount;
     }
 
-    public void setGoal(BigDecimal goal) {
-        this.goal = goal;
+    public void setTargetAmount(BigDecimal targetAmount) {
+        this.targetAmount = targetAmount;
+    }
+
+    public BigDecimal getCurrentAmount() {
+        return currentAmount;
+    }
+
+    public void setCurrentAmount(BigDecimal currentAmount) {
+        this.currentAmount = currentAmount;
     }
 
     public LocalDate getTargetDate() {
