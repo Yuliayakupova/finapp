@@ -4,6 +4,7 @@ import com.example.finapp.BoundedContext.Authentication.Request.CreateUserReques
 import com.example.finapp.BoundedContext.Authentication.Request.LoginRequest;
 import com.example.finapp.BoundedContext.UserManagment.DTO.User;
 import com.example.finapp.BoundedContext.UserManagment.Repository.UserRepository;
+import com.example.finapp.SharedContext.Security.JwtResponse;
 import com.example.finapp.SharedContext.Security.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,17 +43,17 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request) {
         try {
             User user = userRepository.findByEmail(request.getEmail());
             if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 String token = jwtService.generateToken(user.getUserId());
-                return ResponseEntity.ok(token);
+                return ResponseEntity.ok(new JwtResponse(token));
             } else {
-                return ResponseEntity.status(401).body("Invalid credentials");
+                return ResponseEntity.status(401).build();
             }
         } catch (Exception e) {
-            return ResponseEntity.status(401).body("Invalid credentials");
+            return ResponseEntity.status(401).build();
         }
     }
 }
