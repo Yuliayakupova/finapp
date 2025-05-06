@@ -62,3 +62,15 @@ VALUES
     ('Refunds', 'income'),
     ('Other', 'income')
 ON CONFLICT DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS "limit" (
+    limit_id SERIAL PRIMARY KEY,
+    max_amount DECIMAL NOT NULL,
+    used_amount DECIMAL DEFAULT 0,
+    period TEXT NOT NULL,
+    start_date DATE NOT NULL,
+    category_id INT NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY (category_id) REFERENCES category (id),
+    FOREIGN KEY (user_id) REFERENCES "user" (user_id)
+);
