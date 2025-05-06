@@ -61,6 +61,7 @@ public class LimitRepository {
             Limit limit = new Limit();
             limit.setLimitId(rs.getInt("limit_id"));
             limit.setMaxAmount(rs.getBigDecimal("max_amount"));
+            limit.setRemainingAmount(rs.getBigDecimal("max_amount").subtract(rs.getBigDecimal("used_amount")));
             limit.setPeriod(rs.getString("period"));
             limit.setStartDate(rs.getDate("start_date").toLocalDate());
             limit.setCategoryId(rs.getInt("category_id"));
@@ -68,23 +69,6 @@ public class LimitRepository {
             return limit;
         }
     };
-
-    public boolean isLimitExceeded(BigDecimal transactionAmount, int userId, int categoryId) {
-        String sql = sqlLoader.load("queries/limit/check_if_limit_exceeded.sql");
-
-        List<BigDecimal> result = jdbcTemplate.query(
-                sql,
-                new Object[]{userId, categoryId},
-                (rs, rowNum) -> rs.getBigDecimal("remaining_amount")
-        );
-
-        if (!result.isEmpty()) {
-            BigDecimal remainingAmount = result.get(0);
-            return transactionAmount.compareTo(remainingAmount) > 0;
-        }
-
-        return false;
-    }
 
     public void increaseUsedAmount(BigDecimal transactionAmount, int userId, int categoryId) {
         String sql = sqlLoader.load("queries/limit/increase_used_amount.sql");

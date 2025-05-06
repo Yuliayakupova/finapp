@@ -6,14 +6,16 @@ import java.time.LocalDate;
 public class Limit {
     private int limitId;
     private BigDecimal maxAmount;
+    private BigDecimal remainingAmount;
     private String period;
     private LocalDate startDate;
     private int categoryId;
     private int userId;
 
-    public Limit(int limitId, BigDecimal maxAmount, String period, LocalDate startDate, int categoryId, int userId) {
+    public Limit(int limitId, BigDecimal maxAmount, BigDecimal remainingAmount, String period, LocalDate startDate, int categoryId, int userId) {
         this.limitId = limitId;
         this.maxAmount = maxAmount;
+        this.remainingAmount = remainingAmount;
         this.period = period;
         this.startDate = startDate;
         this.categoryId = categoryId;
@@ -38,6 +40,14 @@ public class Limit {
 
     public void setMaxAmount(BigDecimal maxAmount) {
         this.maxAmount = maxAmount;
+    }
+
+    public BigDecimal getRemainingAmount() {
+        return remainingAmount;
+    }
+
+    public void setRemainingAmount(BigDecimal remainingAmount) {
+        this.remainingAmount = remainingAmount;
     }
 
     public String getPeriod() {
