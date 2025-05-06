@@ -13,16 +13,31 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Repository class for handling CRUD operations related to financial transactions.
+ * Uses JDBC and external SQL files for data persistence and querying.
+ */
 @Repository
 public class TransactionRepository {
     private final JdbcTemplate jdbcTemplate;
     private final SqlLoader sqlLoader;
 
+    /**
+     * Constructs a TransactionRepository with dependencies.
+     *
+     * @param jdbcTemplate Spring's JdbcTemplate for executing SQL queries
+     * @param sqlLoader    custom service to load SQL queries from resources
+     */
     public TransactionRepository(JdbcTemplate jdbcTemplate, SqlLoader sqlLoader) {
         this.jdbcTemplate = jdbcTemplate;
         this.sqlLoader = sqlLoader;
     }
 
+    /**
+     * Retrieves all transactions from the database.
+     *
+     * @return list of all transactions
+     */
     public List<Transaction> getAll() {
         String sql = sqlLoader.load("queries/transaction/get_all.sql");
         return jdbcTemplate.query(sql, (rs, rowNum) -> new Transaction(
@@ -35,6 +50,12 @@ public class TransactionRepository {
         ));
     }
 
+    /**
+     * Retrieves a specific transaction by its ID.
+     *
+     * @param id the ID of the transaction
+     * @return the transaction object
+     */
     public Transaction findById(int id) {
         String sql = sqlLoader.load("queries/transaction/get_by_id.sql");
         return jdbcTemplate.queryForObject(
@@ -51,7 +72,13 @@ public class TransactionRepository {
         );
     }
 
-    public void create (CreateTransactionRequest request, int userId) {
+    /**
+     * Inserts a new transaction into the database.
+     *
+     * @param request the transaction creation request
+     * @param userId  the ID of the user creating the transaction
+     */
+    public void create(CreateTransactionRequest request, int userId) {
         String sql = sqlLoader.load("queries/transaction/insert.sql");
         jdbcTemplate.update(sql,
                 request.getAmount(),
@@ -62,11 +89,26 @@ public class TransactionRepository {
         );
     }
 
+    /**
+     * Deletes a transaction by its ID.
+     *
+     * @param id the ID of the transaction to delete
+     */
     public void deleteById(int id) {
         String sql = sqlLoader.load("queries/transaction/delete.sql");
         jdbcTemplate.update(sql, id);
     }
 
+    /**
+     * Filters transactions based on the provided parameters.
+     *
+     * @param startDate filter by creation time from this date
+     * @param endDate   filter by creation time to this date
+     * @param minAmount minimum transaction amount
+     * @param maxAmount maximum transaction amount
+     * @param category  category ID to filter by
+     * @return list of filtered transactions
+     */
     public List<Transaction> filter(LocalDateTime startDate, LocalDateTime endDate, BigDecimal minAmount, BigDecimal maxAmount, int category) {
         String baseSql = sqlLoader.load("queries/transaction/filter_base.sql");
         StringBuilder sql = new StringBuilder(baseSql);
@@ -103,6 +145,12 @@ public class TransactionRepository {
         ));
     }
 
+    /**
+     * Updates an existing transaction with new values.
+     *
+     * @param id      the ID of the transaction to update
+     * @param request the updated transaction data
+     */
     public void update(int id, UpdateTransactionRequest request) {
         String sql = sqlLoader.load("queries/transaction/update.sql");
         jdbcTemplate.update(
