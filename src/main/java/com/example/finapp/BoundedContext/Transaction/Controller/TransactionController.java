@@ -43,12 +43,8 @@ public class TransactionController {
         if (!categoryRepository.isCategoryBelongsToUser(request.getCategoryId(), userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Category does not belong to the user.");
         }
-        if (limitRepository.isLimitExceeded(request.getAmount(), userId, request.getCategoryId())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Transaction exceeds the limit for this category.");
-        }
 
         repository.create(request, userId);
-
         limitRepository.increaseUsedAmount(request.getAmount(), userId, request.getCategoryId());
 
         return ResponseEntity.ok("Transaction created");
