@@ -11,25 +11,47 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
+/**
+ * The CategoryRepository class provides data access methods for performing CRUD operations
+ * related to categories in the personal finance application. It interacts with the database
+ * using SQL queries loaded from external files.
+ */
 @Repository
 public class CategoryRepository {
+
     private final JdbcTemplate jdbcTemplate;
     private final SqlLoader sqlLoader;
     private static final Logger log = LoggerFactory.getLogger(CategoryRepository.class);
 
-
+    /**
+     * Constructs a CategoryRepository with JdbcTemplate and SqlLoader for database operations.
+     *
+     * @param jdbcTemplate the JdbcTemplate for interacting with the database.
+     * @param sqlLoader the SqlLoader for loading SQL queries from external files.
+     */
     public CategoryRepository(JdbcTemplate jdbcTemplate, SqlLoader sqlLoader) {
         this.jdbcTemplate = jdbcTemplate;
         this.sqlLoader = sqlLoader;
     }
 
+    /**
+     * Checks if a category with the given name and type already exists in the database.
+     *
+     * @param name the name of the category.
+     * @param type the type of the category.
+     * @return true if a category with the given name and type exists, false otherwise.
+     */
     public boolean existsByNameAndType(String name, String type) {
         String sql = sqlLoader.load("queries/category/exists_by_name_and_type.sql");
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, name, type);
         return count != null && count > 0;
     }
 
+    /**
+     * Retrieves all categories from the database.
+     *
+     * @return a list of all categories.
+     */
     public List<Category> findAll() {
         String sql = sqlLoader.load("queries/category/find_all.sql");
         return jdbcTemplate.query(sql, (rs, rowNum) ->
@@ -41,6 +63,12 @@ public class CategoryRepository {
         );
     }
 
+    /**
+     * Retrieves a category by its unique identifier.
+     *
+     * @param id the unique identifier of the category.
+     * @return the category with the given id.
+     */
     public Category findById(int id) {
         String sql = sqlLoader.load("queries/category/find_by_id.sql");
         return jdbcTemplate.queryForObject(
@@ -54,6 +82,12 @@ public class CategoryRepository {
         );
     }
 
+    /**
+     * Creates a new category in the database based on the provided request.
+     *
+     * @param request the data to create a new category.
+     * @throws IllegalArgumentException if a category with the same name and type already exists.
+     */
     public void create(CreateCategoryRequest request) {
         if (existsByNameAndType(request.getName(), request.getType())) {
             throw new IllegalArgumentException("Category already exists.");
@@ -63,6 +97,12 @@ public class CategoryRepository {
         jdbcTemplate.update(sql, request.getName(), request.getType());
     }
 
+    /**
+     * Updates an existing category in the database based on the provided id and request.
+     *
+     * @param id the id of the category to be updated.
+     * @param request the data to update the category.
+     */
     public void update(int id, UpdateCategoryRequest request) {
         String sql = sqlLoader.load("queries/category/update.sql");
         jdbcTemplate.update(
@@ -73,26 +113,58 @@ public class CategoryRepository {
         );
     }
 
+    /**
+     * Deletes a category from the database based on its unique identifier.
+     *
+     * @param id the id of the category to be deleted.
+     */
     public void delete(int id) {
         String sql = sqlLoader.load("queries/category/delete.sql");
         jdbcTemplate.update(sql, id);
     }
 
+    /**
+     * Creates a custom category for a specific user.
+     *
+     * @param name the name of the custom category.
+     * @param type the type of the custom category.
+     * @param userId the id of the user who owns the custom category.
+     */
     public void createCustomCategory(String name, String type, int userId) {
         String sql = sqlLoader.load("queries/category/insert_custom.sql");
         jdbcTemplate.update(sql, name, type, userId);
     }
 
+    /**
+     * Deletes a custom category based on its unique identifier.
+     *
+     * @param id the id of the custom category to be deleted.
+     */
     public void deleteCustomCategory(int id) {
         String sql = sqlLoader.load("queries/category/delete_custom.sql");
         jdbcTemplate.update(sql, id);
     }
 
+    /**
+     * Updates a custom category for a specific user.
+     *
+     * @param id the id of the custom category to be updated.
+     * @param name the new name for the custom category.
+     * @param type the new type for the custom category.
+     * @param userId the id of the user who owns the custom category.
+     */
     public void updateCustomCategory(int id, String name, String type, int userId) {
         String sql = sqlLoader.load("queries/category/update_custom.sql");
         jdbcTemplate.update(sql, name, type, userId, id);
     }
 
+    /**
+     * Checks if a category belongs to a specific user.
+     *
+     * @param category_id the id of the category.
+     * @param userId the id of the user.
+     * @return true if the category belongs to the user, false otherwise.
+     */
     public boolean isCategoryBelongsToUser(int category_id, int userId) {
         String sql = sqlLoader.load("queries/category/check_category_belongs_to_user.sql");
         log.debug("Executing SQL: {} with parameters category_id = {}, userId = {}", sql, category_id, userId);
