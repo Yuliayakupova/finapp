@@ -46,24 +46,24 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public Category getById(@PathVariable Long id) {
+    public Category getById(@PathVariable int id) {
         return repository.findById(id);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateCategoryRequest request) {
+    public ResponseEntity<?> update(@PathVariable int id, @RequestBody UpdateCategoryRequest request) {
         repository.update(id, request);
         return ResponseEntity.ok("Category updated");
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable int id) {
         repository.delete(id);
         return ResponseEntity.ok("Category deleted");
     }
 
     @DeleteMapping("/custom/{id}")
-    public ResponseEntity<String> deleteCustomCategory(@PathVariable Long id) {
+    public ResponseEntity<String> deleteCustomCategory(@PathVariable int id) {
         repository.deleteCustomCategory(id);
         return ResponseEntity.ok("Category deleted");
     }

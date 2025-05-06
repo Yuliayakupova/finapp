@@ -26,25 +26,27 @@ public class TransactionRepository {
     public List<Transaction> getAll() {
         String sql = sqlLoader.load("queries/transaction/get_all.sql");
         return jdbcTemplate.query(sql, (rs, rowNum) -> new Transaction(
-                rs.getLong("id"),
+                rs.getInt("id"),
                 rs.getBigDecimal("amount"),
                 rs.getString("description"),
                 rs.getTimestamp("created_at").toLocalDateTime(),
-                rs.getInt("category_id")
+                rs.getInt("category_id"),
+                rs.getInt("moneybox_id")
         ));
     }
 
-    public Transaction findById(Long id) {
+    public Transaction findById(int id) {
         String sql = sqlLoader.load("queries/transaction/get_by_id.sql");
         return jdbcTemplate.queryForObject(
                 sql,
                 new Object[]{id},
                 (rs, rowNum) -> new Transaction(
-                        rs.getLong("id"),
+                        rs.getInt("id"),
                         rs.getBigDecimal("amount"),
                         rs.getString("description"),
                         rs.getTimestamp("created_at").toLocalDateTime(),
-                        rs.getInt("category")
+                        rs.getInt("category_id"),
+                        rs.getInt("moneybox_id")
                 )
         );
     }
@@ -60,7 +62,7 @@ public class TransactionRepository {
         );
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(int id) {
         String sql = sqlLoader.load("queries/transaction/delete.sql");
         jdbcTemplate.update(sql, id);
     }
@@ -92,15 +94,16 @@ public class TransactionRepository {
         }
 
         return jdbcTemplate.query(sql.toString(), params.toArray(), (rs, rowNum) -> new Transaction(
-                rs.getLong("id"),
+                rs.getInt("id"),
                 rs.getBigDecimal("amount"),
                 rs.getString("description"),
                 rs.getTimestamp("created_at").toLocalDateTime(),
-                rs.getInt("category")
+                rs.getInt("category_id"),
+                rs.getInt("moneybox_id")
         ));
     }
 
-    public void update(Long id, UpdateTransactionRequest request) {
+    public void update(int id, UpdateTransactionRequest request) {
         String sql = sqlLoader.load("queries/transaction/update.sql");
         jdbcTemplate.update(
                 sql,

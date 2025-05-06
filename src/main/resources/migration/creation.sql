@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS category (
 CREATE TABLE IF NOT EXISTS moneybox (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
-    goal DECIMAL NOT NULL,
-    current_amount DECIMAL NOT NULL,
+    target_amount DECIMAL NOT NULL,
+    current_amount DECIMAL NOT NULL DEFAULT 0,
     target_date DATE NOT NULL,
     user_id INT,
     FOREIGN KEY (user_id) REFERENCES "user" (user_id)
