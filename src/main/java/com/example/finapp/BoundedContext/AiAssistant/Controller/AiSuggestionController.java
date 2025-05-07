@@ -26,7 +26,7 @@ public class AiSuggestionController {
      */
     @PostMapping("/suggest")
     public AiResponse getSuggestion(@RequestBody AiRequest request) {
-        String result = aiSuggestionService.getSuggestions(request.getPrompt());
+        String result = aiSuggestionService.getSuggestion(request.getPrompt());
         return new AiResponse(result);
     }
 }
