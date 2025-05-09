@@ -2,7 +2,6 @@ package com.example.finapp.BoundedContext.Moneybox.Repository;
 
 import com.example.finapp.BoundedContext.Moneybox.DTO.Moneybox;
 import com.example.finapp.BoundedContext.Moneybox.Request.CreateMoneyboxRequest;
-import com.example.finapp.BoundedContext.Moneybox.Request.UpdateMoneyboxRequest;
 import com.example.finapp.SharedContext.Service.SqlLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,45 +36,6 @@ public class MoneyboxRepository {
     }
 
     /**
-     * Retrieves all moneyboxes from the database.
-     *
-     * @return a list of Moneybox objects representing all moneyboxes.
-     */
-    public List<Moneybox> getAll() {
-        String sql = sqlLoader.load("queries/moneybox/get_all.sql");
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new Moneybox(
-                rs.getInt("id"),
-                rs.getString("name"),
-                rs.getBigDecimal("target_amount"),
-                rs.getBigDecimal("current_amount"),
-                rs.getDate("target_date").toLocalDate(),
-                rs.getInt("user_id")
-        ));
-    }
-
-    /**
-     * Retrieves a moneybox by its ID.
-     *
-     * @param id the ID of the moneybox.
-     * @return the Moneybox object with the specified ID.
-     */
-    public Moneybox findById(int id) {
-        String sql = sqlLoader.load("queries/moneybox/get_by_id.sql");
-        return jdbcTemplate.queryForObject(
-                sql,
-                new Object[]{id},
-                (rs, rowNum) -> new Moneybox(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getBigDecimal("target_amount"),
-                        rs.getBigDecimal("current_amount"),
-                        rs.getDate("target_date").toLocalDate(),
-                        rs.getInt("user_id")
-                )
-        );
-    }
-
-    /**
      * Creates a new moneybox in the database.
      *
      * @param request the CreateMoneyboxRequest object containing the data for the new moneybox.
@@ -94,42 +53,13 @@ public class MoneyboxRepository {
     }
 
     /**
-     * Deletes a moneybox by its ID.
+     * Retrieves all moneyboxes from the database.
      *
-     * @param id the ID of the moneybox to delete.
+     * @return a list of Moneybox objects representing all moneyboxes.
      */
-    public void deleteById(int id) {
-        String sql = sqlLoader.load("queries/moneybox/delete.sql");
-        jdbcTemplate.update(sql, id);
-    }
-
-    /**
-     * Filters moneyboxes based on specified criteria.
-     *
-     * @param minAmount the minimum current amount of the moneyboxes (can be null).
-     * @param maxAmount the maximum current amount of the moneyboxes (can be null).
-     * @param name the name of the moneybox (can be null or empty).
-     * @return a list of moneyboxes matching the filter criteria.
-     */
-    public List<Moneybox> filter(BigDecimal minAmount, BigDecimal maxAmount, String name) {
-        String baseSql = sqlLoader.load("queries/moneybox/filter_base.sql");
-        StringBuilder sql = new StringBuilder(baseSql);
-        List<Object> params = new ArrayList<>();
-
-        if (minAmount != null) {
-            sql.append(" AND current_amount >= ? ");
-            params.add(minAmount);
-        }
-        if (maxAmount != null) {
-            sql.append(" AND current_amount <= ? ");
-            params.add(maxAmount);
-        }
-        if (name != null && !name.isEmpty()) {
-            sql.append(" AND name LIKE ? ");
-            params.add("%" + name + "%");
-        }
-
-        return jdbcTemplate.query(sql.toString(), params.toArray(), (rs, rowNum) -> new Moneybox(
+    public List<Moneybox> getAll() {
+        String sql = sqlLoader.load("queries/moneybox/find_all.sql");
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Moneybox(
                 rs.getInt("id"),
                 rs.getString("name"),
                 rs.getBigDecimal("target_amount"),
@@ -137,23 +67,6 @@ public class MoneyboxRepository {
                 rs.getDate("target_date").toLocalDate(),
                 rs.getInt("user_id")
         ));
-    }
-
-    /**
-     * Updates the details of an existing moneybox.
-     *
-     * @param id the ID of the moneybox to update.
-     * @param request the UpdateMoneyboxRequest object containing the updated data.
-     */
-    public void update(int id, UpdateMoneyboxRequest request) {
-        String sql = sqlLoader.load("queries/moneybox/update.sql");
-        jdbcTemplate.update(
-                sql,
-                request.getName(),
-                request.getTargetAmount(),
-                request.getCurrentAmount(),
-                id
-        );
     }
 
     /**
@@ -169,6 +82,11 @@ public class MoneyboxRepository {
         return count != null && count > 0;
     }
 
+    public BigDecimal getUserIncome(int userId) {
+        String sql = sqlLoader.load("queries/moneybox/get_available_budget.sql");
+        return jdbcTemplate.queryForObject(sql, BigDecimal.class, userId, userId);
+    }
+
     /**
      * Adds a transaction to a moneybox and updates the current amount of the moneybox.
      *
@@ -179,13 +97,67 @@ public class MoneyboxRepository {
      * @param userId the ID of the user associated with the transaction.
      */
     public void addTransactionToMoneybox(int moneyboxId, BigDecimal amount, String description, LocalDate date, int userId) {
-        String insertSql = sqlLoader.load("queries/moneybox/insert_moneybox_transaction.sql");
+
+        String currentAmountSql = sqlLoader.load("queries/moneybox/get_current_amount.sql");
+        BigDecimal currentAmount = jdbcTemplate.queryForObject(currentAmountSql, BigDecimal.class, moneyboxId, userId);
+
+        String targetAmountSql = sqlLoader.load("queries/moneybox/get_target_amount.sql");
+        BigDecimal targetAmount = jdbcTemplate.queryForObject(targetAmountSql, BigDecimal.class, moneyboxId, userId);
+
+        if (currentAmount.add(amount).compareTo(targetAmount) > 0) {
+            throw new IllegalArgumentException("The target amount has already been reached or exceeded.");
+        }
+
         if (date == null) {
             date = LocalDate.now();
         }
+
+        String insertSql = sqlLoader.load("queries/moneybox/insert_moneybox_transaction.sql");
         jdbcTemplate.update(insertSql, amount, description, date, userId, moneyboxId);
 
         String updateSql = sqlLoader.load("queries/moneybox/update_moneybox_amount.sql");
         jdbcTemplate.update(updateSql, amount, moneyboxId);
+
+        int salaryCategoryId = 17;
+        String subtractSql = sqlLoader.load("queries/moneybox/subtract_from_budget.sql");
+        jdbcTemplate.update(subtractSql, amount.negate(), "Transfer to moneybox", date, userId, salaryCategoryId);
+    }
+
+    public void deleteMoneybox(int moneyboxId, int userId) {
+        String checkSql = sqlLoader.load("queries/moneybox/check_exists.sql");
+        Integer count = jdbcTemplate.queryForObject(checkSql, Integer.class, moneyboxId, userId);
+        if (count == null || count == 0) {
+            throw new IllegalArgumentException("Moneybox not found or already deleted");
+        }
+
+        String sumSql = sqlLoader.load("queries/moneybox/get_sum.sql");
+        BigDecimal totalAmount = jdbcTemplate.queryForObject(sumSql, BigDecimal.class, moneyboxId, userId);
+
+        if (totalAmount == null || totalAmount.compareTo(BigDecimal.ZERO) == 0) {
+            totalAmount = BigDecimal.ZERO;
+        }
+
+        String insertTransactionSql = sqlLoader.load("queries/moneybox/insert_return_transaction.sql");
+        jdbcTemplate.update(insertTransactionSql, totalAmount, "Return from moneybox", LocalDate.now(), userId, 17);
+
+        String softDeleteSql = sqlLoader.load("queries/moneybox/soft_delete.sql");
+        jdbcTemplate.update(softDeleteSql, moneyboxId, userId);
+    }
+
+    /**
+     * Returns the total amount stored in a specific moneybox.
+     *
+     * @param moneyboxId the ID of the moneybox
+     * @param userId     the user who owns the moneybox
+     * @return total amount in the moneybox
+     */
+    public BigDecimal getMoneyboxAmount(int moneyboxId, int userId) {
+        String sql = sqlLoader.load("queries/moneybox/sum_moneybox_amount.sql");
+        return jdbcTemplate.queryForObject(sql, BigDecimal.class, moneyboxId, userId);
+    }
+
+    public void returnAmountToIncomeCategory(int userId, BigDecimal amount) {
+        String sql = sqlLoader.load("queries/moneybox/return_to_income.sql");
+        jdbcTemplate.update(sql, amount, userId);
     }
 }

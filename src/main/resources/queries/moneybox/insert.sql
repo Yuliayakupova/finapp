@@ -1,2 +1,2 @@
-INSERT INTO moneybox (name, goal, current_amount, target_date)
-VALUES (?, ?, ?, ?);
+INSERT INTO moneybox (name, target_amount, current_amount, target_date, user_id)
+VALUES (?, ?, ?, ?, ?);

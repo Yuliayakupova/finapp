@@ -38,9 +38,9 @@ public class TransactionRepository {
      *
      * @return list of all transactions
      */
-    public List<Transaction> getAll() {
-        String sql = sqlLoader.load("queries/transaction/get_all.sql");
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new Transaction(
+    public List<Transaction> getAllByUserId(int userId) {
+        String sql = sqlLoader.load("queries/transaction/get_all_by_user.sql");
+        return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) -> new Transaction(
                 rs.getInt("id"),
                 rs.getBigDecimal("amount"),
                 rs.getString("description"),
@@ -48,28 +48,6 @@ public class TransactionRepository {
                 rs.getInt("category_id"),
                 rs.getInt("moneybox_id")
         ));
-    }
-
-    /**
-     * Retrieves a specific transaction by its ID.
-     *
-     * @param id the ID of the transaction
-     * @return the transaction object
-     */
-    public Transaction findById(int id) {
-        String sql = sqlLoader.load("queries/transaction/get_by_id.sql");
-        return jdbcTemplate.queryForObject(
-                sql,
-                new Object[]{id},
-                (rs, rowNum) -> new Transaction(
-                        rs.getInt("id"),
-                        rs.getBigDecimal("amount"),
-                        rs.getString("description"),
-                        rs.getTimestamp("created_at").toLocalDateTime(),
-                        rs.getInt("category_id"),
-                        rs.getInt("moneybox_id")
-                )
-        );
     }
 
     /**

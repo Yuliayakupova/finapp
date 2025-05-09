@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS "user" (
 CREATE TABLE IF NOT EXISTS category (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    type VARCHAR(20) CHECK (type IN ('income', 'expense')) NOT NULL
+    type VARCHAR(20) CHECK (type IN ('income', 'expense')) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES "user" (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS moneybox (
@@ -20,6 +21,7 @@ CREATE TABLE IF NOT EXISTS moneybox (
     current_amount DECIMAL NOT NULL DEFAULT 0,
     target_date DATE NOT NULL,
     user_id INT,
+    deleted_at TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES "user" (user_id)
 );
 

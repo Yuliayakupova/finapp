@@ -48,8 +48,11 @@ public class TransactionController {
      * @return list of all transactions
      */
     @GetMapping
-    public List<Transaction> getAll() {
-        return repository.getAll();
+    public ResponseEntity<List<Transaction>> getAllTransactions() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        int userId = Integer.parseInt(authentication.getPrincipal().toString());
+        List<Transaction> transactions = repository.getAllByUserId(userId);
+        return ResponseEntity.ok(transactions);
     }
 
     /**
@@ -105,18 +108,6 @@ public class TransactionController {
             @RequestParam(required = false) int category
     ) {
         return repository.filter(startDate, endDate, minAmount, maxAmount, category);
-    }
-
-    /**
-     * Retrieves a transaction by its ID.
-     *
-     * @param id the ID of the transaction
-     * @return the transaction, if found
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<Transaction> findById(@PathVariable int id) {
-        Transaction transaction = repository.findById(id);
-        return ResponseEntity.ok(transaction);
     }
 
     /**
