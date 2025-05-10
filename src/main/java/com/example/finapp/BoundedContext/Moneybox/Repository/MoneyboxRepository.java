@@ -55,28 +55,6 @@ public class MoneyboxRepository {
     }
 
     /**
-     * Retrieves a moneybox by its ID.
-     *
-     * @param id the ID of the moneybox.
-     * @return the Moneybox object with the specified ID.
-     */
-    public Moneybox findById(int id) {
-        String sql = sqlLoader.load("queries/moneybox/get_by_id.sql");
-        return jdbcTemplate.queryForObject(
-                sql,
-                new Object[]{id},
-                (rs, rowNum) -> new Moneybox(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getBigDecimal("target_amount"),
-                        rs.getBigDecimal("current_amount"),
-                        rs.getDate("target_date").toLocalDate(),
-                        rs.getInt("user_id")
-                )
-        );
-    }
-
-    /**
      * Creates a new moneybox in the database.
      *
      * @param request the CreateMoneyboxRequest object containing the data for the new moneybox.

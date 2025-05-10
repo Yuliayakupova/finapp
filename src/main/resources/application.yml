@@ -1,5 +1,4 @@
 spring:
   ai:
     openai:
-      api-key: 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
-      model: gpt-3.5-turbo
+      api-key: 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

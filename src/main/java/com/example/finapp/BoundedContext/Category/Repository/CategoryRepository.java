@@ -1,6 +1,7 @@
 package com.example.finapp.BoundedContext.Category.Repository;
 
 import com.example.finapp.BoundedContext.Category.DTO.Category;
+import com.example.finapp.BoundedContext.Category.DTO.CategoryWithLimitDTO;
 import com.example.finapp.BoundedContext.Category.Request.CreateCategoryRequest;
 import com.example.finapp.BoundedContext.Category.Request.UpdateCategoryRequest;
 import com.example.finapp.SharedContext.Service.SqlLoader;
@@ -81,6 +82,29 @@ public class CategoryRepository {
                 )
         );
     }
+
+    public List<CategoryWithLimitDTO> getCategoriesWithLimitsByUser(int userId) {
+        String sql = sqlLoader.load("queries/category/find_all_by_user_with_limits.sql");
+        return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) -> {
+            CategoryWithLimitDTO dto = new CategoryWithLimitDTO();
+            dto.setCategoryId(rs.getInt("category_id"));
+            dto.setName(rs.getString("name"));
+            dto.setType(rs.getString("type"));
+
+            int limitId = rs.getInt("limit_id");
+            if (!rs.wasNull()) {
+                dto.setLimitId(limitId);
+                dto.setMaxAmount(rs.getBigDecimal("max_amount"));
+                dto.setUsedAmount(rs.getBigDecimal("used_amount"));
+                dto.setPeriod(rs.getString("period"));
+                dto.setStartDate(rs.getDate("start_date").toLocalDate());
+            }
+
+            return dto;
+        });
+    }
+
+
 
     /**
      * Creates a new category in the database based on the provided request.

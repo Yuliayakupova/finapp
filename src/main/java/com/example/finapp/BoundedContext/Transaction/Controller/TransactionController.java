@@ -108,18 +108,6 @@ public class TransactionController {
     }
 
     /**
-     * Retrieves a transaction by its ID.
-     *
-     * @param id the ID of the transaction
-     * @return the transaction, if found
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<Transaction> findById(@PathVariable int id) {
-        Transaction transaction = repository.findById(id);
-        return ResponseEntity.ok(transaction);
-    }
-
-    /**
      * Updates an existing transaction.
      *
      * @param id      the ID of the transaction to update
@@ -134,4 +122,12 @@ public class TransactionController {
         repository.update(id, request);
         return ResponseEntity.ok("Transaction updated");
     }
+
+    @GetMapping("/user")
+    public List<Transaction> getAllByUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        int userId = (int) authentication.getPrincipal();
+        return repository.findAllByUserId(userId);
+    }
+
 }
