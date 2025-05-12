@@ -1,14 +1,18 @@
 package com.example.finapp.BoundedContext.Category.Repository;
 
 import com.example.finapp.BoundedContext.Category.DTO.Category;
+import com.example.finapp.BoundedContext.Category.DTO.CategoryExpense;
 import com.example.finapp.BoundedContext.Category.Request.CreateCategoryRequest;
 import com.example.finapp.BoundedContext.Category.Request.UpdateCategoryRequest;
 import com.example.finapp.SharedContext.Service.SqlLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -172,4 +176,23 @@ public class CategoryRepository {
         log.debug("Result count: {}", count);
         return count != null && count > 0;
     }
+
+    public List<Category> getExpensesByUser(int userId) {
+        String sql = sqlLoader.load("queries/category/get_expenses_by_user.sql");
+        return jdbcTemplate.query(sql, new Object[]{userId}, categoryRowMapper);
+    }
+
+    /**
+     * RowMapper implementation that maps the SQL result set to a Category object.
+     */
+    private final RowMapper<Category> categoryRowMapper = new RowMapper<Category>() {
+        @Override
+        public Category mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Category category = new Category();
+            category.setId(rs.getInt("category_id"));
+            category.setName(rs.getString("category_name"));
+            category.setType(rs.getString("category_type"));
+            return category;
+        }
+    };
 }

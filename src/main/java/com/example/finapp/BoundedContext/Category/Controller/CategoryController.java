@@ -1,6 +1,7 @@
 package com.example.finapp.BoundedContext.Category.Controller;
 
 import com.example.finapp.BoundedContext.Category.DTO.Category;
+import com.example.finapp.BoundedContext.Category.DTO.CategoryExpense;
 import com.example.finapp.BoundedContext.Category.Repository.CategoryRepository;
 import com.example.finapp.BoundedContext.Category.Request.CreateCategoryRequest;
 import com.example.finapp.BoundedContext.Category.Request.UpdateCategoryRequest;
@@ -89,7 +90,7 @@ public class CategoryController {
     /**
      * Endpoint to update an existing category.
      *
-     * @param id the ID of the category to be updated.
+     * @param id      the ID of the category to be updated.
      * @param request the new data for the category.
      * @return a response indicating the result of the update process.
      */
@@ -97,18 +98,6 @@ public class CategoryController {
     public ResponseEntity<?> update(@PathVariable int id, @RequestBody UpdateCategoryRequest request) {
         repository.update(id, request);
         return ResponseEntity.ok("Category updated");
-    }
-
-    /**
-     * Endpoint to delete a category by its ID.
-     *
-     * @param id the ID of the category to be deleted.
-     * @return a response indicating the result of the deletion process.
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable int id) {
-        repository.delete(id);
-        return ResponseEntity.ok("Category deleted");
     }
 
     /**
@@ -121,5 +110,14 @@ public class CategoryController {
     public ResponseEntity<String> deleteCustomCategory(@PathVariable int id) {
         repository.deleteCustomCategory(id);
         return ResponseEntity.ok("Category deleted");
+    }
+
+    @GetMapping("/expenses")
+    public ResponseEntity<List<Category>> getUserExpenses() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        int userId = (int) authentication.getPrincipal();
+
+        List<Category> expenses = repository.getExpensesByUser(userId);
+        return ResponseEntity.ok(expenses);
     }
 }

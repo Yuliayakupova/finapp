@@ -28,6 +28,10 @@ public class Category {
         this.type = type;
     }
 
+    public Category() {
+
+    }
+
     /**
      * Gets the unique identifier of the category.
      *
