@@ -87,10 +87,13 @@ public class TransactionRepository {
      * @param category  category ID to filter by
      * @return list of filtered transactions
      */
-    public List<Transaction> filter(LocalDateTime startDate, LocalDateTime endDate, BigDecimal minAmount, BigDecimal maxAmount, int category) {
+    public List<Transaction> filter(int userId, LocalDateTime startDate, LocalDateTime endDate, BigDecimal minAmount, BigDecimal maxAmount, int category) {
         String baseSql = sqlLoader.load("queries/transaction/filter_base.sql");
         StringBuilder sql = new StringBuilder(baseSql);
         List<Object> params = new ArrayList<>();
+
+        sql.append(" AND t.user_id = ? ");
+        params.add(userId);
 
         if (startDate != null) {
             sql.append(" AND created_at >= ? ");
@@ -109,7 +112,7 @@ public class TransactionRepository {
             params.add(maxAmount);
         }
         if (category > 0) {
-            sql.append(" AND category = ? ");
+            sql.append(" AND category_id = ? ");
             params.add(category);
         }
 

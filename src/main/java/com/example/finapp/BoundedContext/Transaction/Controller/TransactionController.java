@@ -101,13 +101,14 @@ public class TransactionController {
      */
     @GetMapping("/filter")
     public List<Transaction> filter(
+            @RequestParam(required = false) int userId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
             @RequestParam(required = false) BigDecimal minAmount,
             @RequestParam(required = false) BigDecimal maxAmount,
             @RequestParam(required = false) int category
     ) {
-        return repository.filter(startDate, endDate, minAmount, maxAmount, category);
+        return repository.filter(userId, startDate, endDate, minAmount, maxAmount, category);
     }
 
     /**

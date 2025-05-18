@@ -51,7 +51,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection (because we are using JWT-based authentication).
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/v1/authentication/**").permitAll() // Permit all requests to authentication endpoints.
+                        .requestMatchers("/api/v1/authentication/**").permitAll()
+                        .requestMatchers("/api/v1/financial-advice/**").permitAll()// Permit all requests to authentication endpoints.
                         .anyRequest().authenticated() // Require authentication for any other request.
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Add our custom JWT filter before the UsernamePasswordAuthenticationFilter.
