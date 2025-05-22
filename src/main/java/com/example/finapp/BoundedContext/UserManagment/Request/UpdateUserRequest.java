@@ -5,6 +5,7 @@ package com.example.finapp.BoundedContext.UserManagment.Request;
  * Contains the fields that can be modified when updating a user.
  */
 public class UpdateUserRequest {
+    private int id;
     private String email;
     private String password;
     private String name;
@@ -18,11 +19,20 @@ public class UpdateUserRequest {
      * @param name the user's name
      * @param isAuthenticated indicates whether the user is authenticated
      */
-    public UpdateUserRequest(String email, String password, String name, boolean isAuthenticated) {
+    public UpdateUserRequest(int id, String email, String password, String name, boolean isAuthenticated) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
         this.isAuthenticated = isAuthenticated;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     /**

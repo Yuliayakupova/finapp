@@ -66,7 +66,9 @@ public class TransactionController {
     public ResponseEntity<String> create(@RequestBody CreateTransactionRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int userId = (int) authentication.getPrincipal();
-
+        if (request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            return ResponseEntity.badRequest().body("Amount must be positive.");
+        }
         if (!categoryRepository.isCategoryBelongsToUser(request.getCategoryId(), userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Category does not belong to the user.");
         }
@@ -123,6 +125,9 @@ public class TransactionController {
             @PathVariable int id,
             @RequestBody UpdateTransactionRequest request
     ) {
+        if (request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            return ResponseEntity.badRequest().body("Amount must be positive.");
+        }
         repository.update(id, request);
         return ResponseEntity.ok("Transaction updated");
     }

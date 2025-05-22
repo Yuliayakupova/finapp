@@ -45,6 +45,7 @@ public class UserController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable int id, @RequestBody UpdateUserRequest request) {
+        request.setId(id); // the id field is added to UpdateUserRequest
         repository.update(request);
         return ResponseEntity.ok("User updated");
     }

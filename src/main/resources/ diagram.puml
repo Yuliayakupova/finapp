@@ -1,0 +1,40 @@
+@startuml FinAppComponentDiagram
+
+!define COMPONENT #FFCC00
+!define EXTERNAL #CCCCCC
+
+skinparam component {
+  BackgroundColor COMPONENT
+  BorderColor #333
+  ArrowColor #666
+}
+
+component "finapp" as mobile #COMPONENT
+
+component "TransactionComponent" as transaction #COMPONENT {
+    interface "TransactionAPI" as transAPI
+}
+
+component "CategoryComponent" as category #COMPONENT {
+    interface "CategoryAPI"
+}
+
+component "SecurityComponent" as security #COMPONENT {
+    interface "AuthAPI"
+}
+
+database "PostgreSQL" as db #EXTERNAL <<external>>
+
+cloud "Groq API" as groq #EXTERNAL <<external>>
+
+mobile --> transAPI : REST API
+mobile --> "AuthAPI" : REST API
+
+transaction --> db : JDBC
+category --> db : JDBC
+
+security --> db : JDBC
+
+transaction --> groq : HTTP API
+
+@enduml

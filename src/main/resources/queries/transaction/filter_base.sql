@@ -3,5 +3,5 @@ FROM "transaction" t
 JOIN category c ON t.category_id = c.id
 WHERE 1=1
 AND c.type = 'expense'
-AND t.user_id = 6
+AND t.user_id = ?
 
